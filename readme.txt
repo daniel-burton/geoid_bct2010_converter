@@ -3,4 +3,3 @@ To add:
   -census block option
   -option to put BCT in far left column for better joins
   -other?
-  -add check so it runs properly on both windows and linux, python 2 and 3. 
