@@ -3,9 +3,13 @@ import csv, argparse, sys
 def bct_translate(geoid):
     """take the 11 digit geoid and turn it into a DCP boro code using a dictionary"""
     boros = {"061":"1", "005":"2", "047":"3", "081":"4", "085":"5"}
-    return boros[geoid[2:5]]
+    try:
+	return boros[geoid[2:5]]
+    except KeyError:
+	print("Key Error! Unknown county: " geoid)
+	return "Error "
 
-#create parser, assign command line arguments with defaults for input and output files
+#create command line arg parser, assign command line arguments with defaults for input and output files
 parser = argparse.ArgumentParser(description = ("Translate 11-digit Census Tract GEOID into a"
                                                 " NYC-DCP BCT2010 number for better joining with"
                                                 " GIS or Excel files"))
@@ -14,7 +18,7 @@ parser.add_argument("output_file", nargs = "?", help = ("provide output file, de
                                                         " bct_translator_output.csv"),
                                                         default = "bct_translator_output.csv")
 parser.add_argument("--column", "-c", help = ("which column in csv is geoid? Usually in census bureau"
-					" files it is 2. Note column #s start with zero."),
+					" files it is 1. Note column indexes start with zero."),
 					default = 1, type = int, nargs = "?")
 args = parser.parse_args()
 
@@ -22,7 +26,7 @@ args = parser.parse_args()
 #now create csv reader and writer iterators
 input_reader = csv.reader(open(args.input_file))
 
-if sys.platform == "win32": #to deal with weird windows csv error
+if sys.platform == "win32": #to deal with mysterious windows csv error
     output_writer = csv.writer(open(args.output_file,'wb'))
 else:
     output_writer = csv.writer(open(args.output_file,'w'))
